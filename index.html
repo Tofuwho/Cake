@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Birthday Cake</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #fce4ec, #f3e5f5, #e8eaf6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            animation: bg-shift 15s infinite alternate;
+        }
+
+        @keyframes bg-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .container {
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #e91e63;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            font-size: clamp(24px, 5vw, 36px);
+        }
+
+        .cake-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            margin-bottom: 20px;
+        }
+
+        .plate {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            height: 20px;
+            background: linear-gradient(to bottom, #f5f5f5, #e0e0e0);
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), inset 0 2px 5px rgba(255, 255, 255, 0.8);
+            overflow: hidden;
+        }
+        
+        .plate:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%);
+            border-radius: inherit;
+        }
+
+        .cake {
+            position: absolute;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .layer {
+            border-radius: 8px;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .layer-1 {
+            width: 240px;
+            height: 60px;
+            background: linear-gradient(to bottom, #ffcdd2 40%, #ef9a9a 100%);
+            box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15), inset 0 -4px 10px rgba(0, 0, 0, 0.1), inset 10px 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .layer-2 {
+            width: 220px;
+            height: 60px;
+            background: linear-gradient(to bottom, #f8bbd0 40%, #f48fb1 100%);
+            margin-top: -10px;
+            box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15), inset 0 -4px 10px rgba(0, 0, 0, 0.1), inset 10px 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .layer-3 {
+            width: 200px;
+            height: 60px;
+            background: linear-gradient(to bottom, #e1bee7 40%, #ce93d8 100%);
+            margin-top: -10px;
+            box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15), inset 0 -4px 10px rgba(0, 0, 0, 0.1), inset 10px 0 15px rgba(255, 255, 255, 0.5);
+        }
+        
+        .layer:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%);
+            border-radius: inherit;
+        }
+
+        .frosting {
+            position: absolute;
+            height: 15px;
+            width: 100%;
+            top: -12px;
+            left: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .frosting-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.1), inset 2px 2px 4px rgba(255, 255, 255, 0.8);
+            position: relative;
+        }
+        
+        .frosting-dot:after {
+            content: "";
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+        }
+
+        .cherry {
+            width: 22px;
+            height: 22px;
+            background: radial-gradient(circle at 30% 30%, #f44336 40%, #e53935 60%, #c62828 100%);
+            border-radius: 50%;
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.2), 2px 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cherry:after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 5px;
+            width: 8px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            transform: rotate(30deg);
+        }
+
+        .cherry-stem {
+            width: 4px;
+            height: 15px;
+            background: linear-gradient(to right, #388e3c, #4caf50);
+            position: absolute;
+            top: -38px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-5deg);
+            border-radius: 4px;
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .candles-container {
+            position: absolute;
+            top: -75px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .candle {
+            position: relative;
+            width: 12px;
+            height: 70px;
+            background: linear-gradient(to bottom, #ffeb3b, #ffd54f 40%, #ffc107 60%, #ff9800);
+            border-radius: 4px;
+            z-index: 10;
+            cursor: pointer;
+            box-shadow: inset 2px 0 5px rgba(255, 255, 255, 0.7), inset -2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .candle:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: #fff9c4;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .candle:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: -1px;
+            width: 14px;
+            height: 3px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+        }
+
+        .flame {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 30px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 10%, #ff5722 30%, #ff9800 60%);
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 15px #ff9800, 0 0 25px #ff5722, 0 0 5px #fff;
+            animation: flicker 0.5s infinite alternate;
+            z-index: 3;
+            filter: blur(0.5px);
+        }
+        
+        .flame:after {
+            content: "";
+            position: absolute;
+            width: 8px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            top: 5px;
+            left: 4px;
+            filter: blur(2px);
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); opacity: 1; }
+            100% { transform: translateX(-50%) scale(0.9); opacity: 0.8; }
+        }
+
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f44336;
+            opacity: 0;
+        }
+
+        .message {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            font-size: clamp(16px, 4vw, 20px);
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #d81b60;
+        }
+
+        .btn {
+            background: #e91e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            background: #c2185b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 600px) {
+            .cake-container {
+                height: 300px;
+            }
+            
+            .layer-1 {
+                width: 200px;
+                height: 50px;
+            }
+            
+            .layer-2 {
+                width: 180px;
+                height: 50px;
+            }
+            
+            .layer-3 {
+                width: 160px;
+                height: 50px;
+            }
+            
+            .candle {
+                height: 50px;
+                width: 10px;
+                top: 5px;
+            }
+            
+            .flame {
+                width: 14px;
+                height: 25px;
+            }
+            
+            .plate {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .cake-container {
+                height: 250px;
+            }
+            
+            .layer-1 {
+                width: 160px;
+                height: 40px;
+            }
+            
+            .layer-2 {
+                width: 140px;
+                height: 40px;
+            }
+            
+            .layer-3 {
+                width: 120px;
+                height: 40px;
+            }
+            
+            .candle {
+                height: 40px;
+                width: 8px;
+                top: 5px;
+            }
+            
+            .flame {
+                width: 12px;
+                height: 20px;
+                top: -20px;
+            }
+            
+            .plate {
+                width: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Happy Birthday!</h1>
+        
+        <div class="cake-container">
+            <div class="plate"></div>
+            <div class="cake">
+                <div class="layer layer-3">
+                    <div class="frosting">
+                        <div class="frosting-dot" style="background-color: #ffeb3b;"></div>
+                        <div class="frosting-dot" style="background-color: #4caf50;"></div>
+                        <div class="frosting-dot" style="background-color: #2196f3;"></div>
+                        <div class="frosting-dot" style="background-color: #f06292;"></div>
+                    </div>
+                </div>
+                <div class="candles-container">
+                    <div class="candle" id="candle1">
+                        <div class="flame"></div>
+                    </div>
+                </div>
+                <div class="layer layer-2">
+                    <div class="frosting">
+                        <div class="frosting-dot" style="background-color: #2196f3;"></div>
+                        <div class="frosting-dot" style="background-color: #f06292;"></div>
+                        <div class="frosting-dot" style="background-color: #ffeb3b;"></div>
+                        <div class="frosting-dot" style="background-color: #4caf50;"></div>
+                        <div class="frosting-dot" style="background-color: #2196f3;"></div>
+                    </div>
+                </div>
+                <div class="layer layer-1">
+                    <div class="frosting">
+                        <div class="frosting-dot" style="background-color: #f06292;"></div>
+                        <div class="frosting-dot" style="background-color: #ffeb3b;"></div>
+                        <div class="frosting-dot" style="background-color: #4caf50;"></div>
+                        <div class="frosting-dot" style="background-color: #2196f3;"></div>
+                        <div class="frosting-dot" style="background-color: #f06292;"></div>
+                        <div class="frosting-dot" style="background-color: #ffeb3b;"></div>
+                    </div>
+                </div>
+                <!-- Cherry removed as candle takes its place -->
+            </div>
+        </div>
+
+        <div class="message">Make a wish and blow out the candles!</div>
+        <button class="btn" id="blowButton">Blow Candles</button>
+    </div>
+
+    <div class="confetti-container" id="confetti-container"></div>
+
+    <script>
+        // Candle functionality
+        const candles = document.querySelectorAll('.candle');
+        const blowButton = document.getElementById('blowButton');
+        const message = document.querySelector('.message');
+        let candlesBlown = 0;
+        const totalCandles = 1; // Only one candle now
+
+        // Blow candle on click
+        candles.forEach(candle => {
+            candle.addEventListener('click', function() {
+                const flame = this.querySelector('.flame');
+                if (flame) {
+                    flame.remove();
+                    candlesBlown++;
+                    checkAllCandlesBlown();
+                }
+            });
+        });
+
+        // Blow all candles with button
+        blowButton.addEventListener('click', function() {
+            candles.forEach(candle => {
+                const flame = candle.querySelector('.flame');
+                if (flame) {
+                    flame.remove();
+                }
+            });
+            candlesBlown = totalCandles;
+            checkAllCandlesBlown();
+        });
+
+        // Check if all candles are blown
+        function checkAllCandlesBlown() {
+            if (candlesBlown === totalCandles) {
+                message.textContent = 'Your wish has been made! Have a wonderful birthday!';
+                createConfetti();
+            } else if (candlesBlown > 0) {
+                message.textContent = `${candlesBlown} out of ${totalCandles} candles blown! Keep going!`;
+            }
+        }
+
+        // Confetti animation
+        function createConfetti() {
+            const confettiContainer = document.getElementById('confetti-container');
+            const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722'];
+            
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Random properties
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const left = Math.random() * 100;
+                const width = Math.random() * 10 + 5;
+                const height = Math.random() * 10 + 5;
+                const delay = Math.random() * 3;
+                const duration = Math.random() * 2 + 3;
+                
+                // Apply styles
+                confetti.style.backgroundColor = color;
+                confetti.style.left = left + 'vw';
+                confetti.style.width = width + 'px';
+                confetti.style.height = height + 'px';
+                confetti.style.top = '-20px';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                // Animation
+                confetti.style.animation = `fall ${duration}s linear ${delay}s forwards`;
+                confetti.style.opacity = '1';
+                
+                // Add keyframe animation dynamically
+                const keyframes = `
+                    @keyframes fall {
+                        0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+                        100% { transform: translate(${Math.random() * 100 - 50}px, ${window.innerHeight + 20}px) rotate(${Math.random() * 360}deg); opacity: 0; }
+                    }
+                `;
+                
+                const styleSheet = document.createElement('style');
+                styleSheet.innerHTML = keyframes;
+                document.head.appendChild(styleSheet);
+                
+                // Add to container
+                confettiContainer.appendChild(confetti);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    confetti.remove();
+                    styleSheet.remove();
+                }, (duration + delay) * 1000);
+            }
+        }
+
+        // Make candles flicker
+        function flickerCandles() {
+            const flames = document.querySelectorAll('.flame');
+            flames.forEach(flame => {
+                // Random adjustment to the animation
+                const randomFlicker = Math.random() * 0.5 + 0.5;
+                flame.style.animationDuration = `${randomFlicker}s`;
+            });
+        }
+
+        // Call flicker function periodically
+        setInterval(flickerCandles, 1000);
+
+        // For mobile/touch devices - detect device motion for blowing
+        if (window.DeviceMotionEvent) {
+            window.addEventListener('devicemotion', function(event) {
+                const acceleration = event.accelerationIncludingGravity;
+                const shakeThreshold = 15;
+                
+                // Detect shaking (simulating blowing)
+                if (acceleration && Math.abs(acceleration.x) + Math.abs(acceleration.y) + Math.abs(acceleration.z) > shakeThreshold) {
+                    candles.forEach(candle => {
+                        const flame = candle.querySelector('.flame');
+                        if (flame) {
+                            flame.remove();
+                        }
+                    });
+                    candlesBlown = totalCandles;
+                    checkAllCandlesBlown();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
