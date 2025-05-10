@@ -541,7 +541,7 @@
         setInterval(flickerCandles, 1000);
 
         // For mobile/touch devices - detect device motion for blowing
-        if (window.DeviceMotionEvent) {
+        if (window.DeviceMotionEvent && !/Mobi|Android/i.test(navigator.userAgent)) {
             window.addEventListener('devicemotion', function(event) {
                 const acceleration = event.accelerationIncludingGravity;
                 const shakeThreshold = 15;
